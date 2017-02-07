@@ -18,6 +18,20 @@
   font-size: large;
 }
 
+.Article-button {
+    background-color: #2377ff;
+    color: white;
+    border-radius: 15px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    border: 0;
+    cursor: pointer;
+}
+
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }

@@ -16,7 +16,7 @@ const Loading = function(props) {
 
 const Article = function(props) {
     return (
-        <p>{props.text}</p>
+        <button className='Article-button'>{props.text}</button>
     );
 }
 
@@ -24,8 +24,9 @@ const Articles = function(props) {
     if(props.ready){
         return (
             <div>
-                <p>{props.target}</p>
+                <p>Is <strong>{props.target}</strong> found in: </p>
                 <Article text={props.title1}></Article>
+                <br/><strong>or</strong><br/>
                 <Article text={props.title2}></Article>
             </div>
         );
@@ -40,12 +41,9 @@ class App extends Component {
     return (
       <div className="App">
         <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
+          <h2>Welcome to the Wikipedia Guess Game</h2>
+          <h3>Blablablablabla</h3>
         </div>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
         <Loading show={this.state.loading}></Loading>
         <Articles
             ready={!this.state.loading}
