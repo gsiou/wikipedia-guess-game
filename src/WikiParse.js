@@ -1,20 +1,7 @@
 export function fetchArticles() {
     return new Promise(function(resolve, reject) {
-        var random_article_promise = fetchFromWiki(
-            'action=query&grnlimit=1&generator=random&grnnamespace=0&format=json&origin=*'
-        );
 
-        var article1_promise = random_article_promise.then(function(article) {
-            var articleobj = JSON.parse(article);
-            var pages = articleobj.query.pages;
-            var pageid = pages[(Object.keys(pages)[0])].pageid
-
-            return fetchFromWiki(
-                'action=query&prop=links&pllimit=max&format=json&pageids=' + pageid +'&origin=*'
-            );
-        });
-
-        article1_promise.then(function (fullarticle) {
+        getRandom().then(function (fullarticle) {
             var links = extractLinks(fullarticle);
             // Get the topic to be questioned
             do {
@@ -24,9 +11,9 @@ export function fetchArticles() {
 
             // Find related link
             getRelated(target_link_obj, random_link_index, links).then(function(result) {
-                console.log("ARTICLE 1:" + getTitle(fullarticle));
-                console.log("ARTICLE 2: " + getTitle(result));
-                console.log("TARGET: " + target_link_obj.title);
+                //console.log("ARTICLE 1: " + getTitle(fullarticle));
+                //console.log("ARTICLE 2: " + getTitle(result));
+                //console.log("TARGET: " + target_link_obj.title);
                 resolve({
                     "article1": getTitle(fullarticle),
                     "article2": getTitle(result),
@@ -37,7 +24,36 @@ export function fetchArticles() {
     });
 }
 
+function getRandom(){
+    //console.log("Inside get random");
+    return new Promise(function(resolve, reject) {
+        var random_article_promise = fetchFromWiki(
+            'action=query&grnlimit=1&generator=random&grnnamespace=0&format=json&origin=*'
+        );
+
+        random_article_promise.then(function(article) {
+            var articleobj = JSON.parse(article);
+            var pages = articleobj.query.pages;
+            var pageid = pages[(Object.keys(pages)[0])].pageid
+
+            fetchFromWiki(
+                'action=query&prop=links&pllimit=max&format=json&pageids=' + pageid +'&origin=*'
+            ).then(function(article){
+                if(extractLinks(article) === undefined){
+                    // Proooobably bad
+                    resolve(getRandom());
+                }
+                else{
+                    resolve(article);
+                }
+            });
+        });
+    });
+}
+
+
 function getRelated(target_link_obj, random_link_index, links) {
+    //console.log("Inside get related");
     return new Promise(function(resolve, reject) {
         do {
             var second_article_index = randomInt(0, links.length);
@@ -47,14 +63,28 @@ function getRelated(target_link_obj, random_link_index, links) {
         fetchFromWiki(
             'action=query&prop=links&pllimit=max&format=json&titles=' + links[second_article_index].title +'&origin=*'
         ).then(function(second_article) {
-            var links = extractLinks(second_article);
-            for(var i = 0; i < links.length; i++) {
-                if(links[i].title === target_link_obj.title){
-                    // Handle this
-                    resolve(getRelated());
+            var second_links = extractLinks(second_article);
+            if(second_links === undefined){
+                // Proooobably bad
+                resolve(getRelated(target_link_obj, random_link_index, links));
+            }
+            else{
+                var unique = true;
+                for(var i = 0; i < second_links.length; i++) {
+                    if(second_links[i].title === target_link_obj.title){
+                        unique = false;
+                        break;
+                    }
+                }
+                if(unique){
+                    resolve(second_article);
+                }
+                else{
+                    // The following seems very not supposed to be like this
+                    // but it seems to work for now.
+                    resolve(getRelated(target_link_obj, random_link_index, links));
                 }
             }
-            resolve(second_article);
         });
     });
 }
