@@ -16,18 +16,30 @@ const Loading = function(props) {
 
 const Article = function(props) {
     return (
-        <button className='Article-button'>{props.text}</button>
+        <button className='Article-button' onClick={props.handler}>{props.text}</button>
     );
 }
 
 const Articles = function(props) {
     if(props.ready){
+        var correctArticle = <Article text={props.title1} handler={props.correctHandler}></Article>;
+        var wrongArticle = <Article text={props.title2} handler={props.wrongHandler}></Article>;
+        var article1 = null;
+        var article2 = null;
+        if(Math.random() > 0.5){
+            article1 = correctArticle;
+            article2 = wrongArticle;
+        }
+        else {
+            article1 = wrongArticle;
+            article2 = correctArticle;
+        }
         return (
             <div>
                 <p>Is <strong>{props.target}</strong> found in: </p>
-                <Article text={props.title1}></Article>
+                {article1}
                 <br/><strong>or</strong><br/>
-                <Article text={props.title2}></Article>
+                {article2}
             </div>
         );
     }
@@ -37,39 +49,63 @@ const Articles = function(props) {
 }
 
 class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <div className="App-header">
-          <h2>Welcome to the Wikipedia Guess Game</h2>
-          <h3>Blablablablabla</h3>
-        </div>
-        <Loading show={this.state.loading}></Loading>
-        <Articles
-            ready={!this.state.loading}
-            title1={this.state.article1}
-            title2={this.state.article2}
-            target={this.state.target}>
-        </Articles>
-      </div>
-    );
-  }
 
-  constructor() {
-    super();
-    this.state = {
-        loading: true,
-        article1: null,
-        article2: null,
-        target: null,
-        score: 0
+    render() {
+        return (
+            <div className="App">
+                <div className="App-header">
+                    <h2>Welcome to the Wikipedia Guess Game</h2>
+                    <h3>Score: {this.state.score}</h3>
+                </div>
+                <Loading show={this.state.loading}></Loading>
+                <Articles
+                    ready={!this.state.loading}
+                    title1={this.state.article1}
+                    title2={this.state.article2}
+                    correctHandler={this.correctHandler}
+                    wrongHandler={this.wrongHandler}
+                    target={this.state.target}>
+                </Articles>
+            </div>
+        );
     }
-    var that = this;
-    fetchArticles().then(function(result) {
-        console.log(result);
-        that.setState({loading: false, article1: result.article1, article2: result.article2, target: result.target});
-    });
-  }
+
+    constructor() {
+        super();
+        this.state = {
+            loading: true,
+            article1: null,
+            article2: null,
+            target: null,
+            score: 0
+        }
+
+        this.componentDidMount = this.componentDidMount.bind(this);
+        this.correctHandler = this.correctHandler.bind(this);
+        this.wrongHandler = this.wrongHandler.bind(this);
+        this.loadArticles = this.loadArticles.bind(this);
+    }
+
+    componentDidMount() {
+        this.loadArticles();
+    }
+
+    loadArticles() {
+        this.setState({loading: true});
+        var that = this;
+        fetchArticles().then(function(result) {
+            that.setState({loading: false, article1: result.article1, article2: result.article2, target: result.target});
+        });
+    }
+
+    correctHandler() {
+        this.setState({score: this.state.score + 1});
+        this.loadArticles();
+    }
+
+    wrongHandler() {
+        this.loadArticles();
+    }
 }
 
 export default App;
