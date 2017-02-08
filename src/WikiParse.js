@@ -57,7 +57,7 @@ function getRelated(target_link_obj, random_link_index, links) {
     return new Promise(function(resolve, reject) {
         do {
             var second_article_index = randomInt(0, links.length);
-        } while(second_article_index === random_link_index);
+        } while(second_article_index === random_link_index || links[second_article_index].ns !== 0);
 
         // Get articles links
         fetchFromWiki(
