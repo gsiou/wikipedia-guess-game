@@ -58,9 +58,10 @@ class App extends Component {
             <div className="App">
                 <div className="App-header">
                     <h2>Welcome to the Wikipedia Guess Game</h2>
-                    <h3>Score: {this.state.score}</h3>
+                    <h3 className="Score-label">Score: {this.state.score}</h3>
+                    <h4>Max Score: {this.state.maxScore}</h4>
                     <p>This game is in <strong>alpha</strong>.
-                        That means it breaks <strong>a lot </strong>.
+                        That means it breaks <strong>a lot</strong>.
                         Report any issues on <a href="https://github.com/gsiou/wikipedia-guess-game">github</a>.</p>
                 </div>
                 <Loading show={this.state.loading}></Loading>
@@ -72,19 +73,28 @@ class App extends Component {
                     wrongHandler={this.wrongHandler}
                     target={this.state.target}>
                 </Articles>
-                <div className="App-footer">Created by gsiou. Original idea by amostheo</div>
+                <div className="App-footer">Created by gsiou. Original idea by amostheo.</div>
             </div>
         );
     }
 
     constructor() {
         super();
+        var storedMaxScore;
+        if (localStorage.maxScore){
+            storedMaxScore = localStorage.maxScore;
+        }
+        else {
+            localStorage.maxScore = 0;
+            storedMaxScore = 0;
+        }
         this.state = {
             loading: true,
             article1: null,
             article2: null,
             target: null,
-            score: 0
+            score: 0,
+            maxScore: storedMaxScore
         }
 
         this.componentDidMount = this.componentDidMount.bind(this);
@@ -106,11 +116,21 @@ class App extends Component {
     }
 
     correctHandler() {
-        this.setState({score: this.state.score + 1});
+        var oldScore = this.state.score;
+        this.setState({score: oldScore + 1});
+        if(oldScore + 1 > this.state.maxScore) {
+            this.setState({maxScore: oldScore + 1});
+            localStorage.maxScore = oldScore + 1;
+        }
         this.loadArticles();
     }
 
     wrongHandler() {
+        if(this.state.score > this.state.maxScore) {
+            this.setState({maxScore: this.state.score});
+            localStorage.maxScore = this.state.score;
+        }
+        this.setState({score: 0});
         this.loadArticles();
     }
 }
