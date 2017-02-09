@@ -1,12 +1,16 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
+import LoadingImage from './loader.gif'
 import './App.css';
 import {fetchArticles} from './WikiParse.js';
 
 const Loading = function(props) {
     if(props.show) {
         return (
-            <img src='https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif' alt='loading'/>
+            <div>
+                <h3>Loading...</h3>
+                <img src={LoadingImage} alt='loading'/>
+            </div>
         );
     }
     else {
@@ -36,7 +40,7 @@ const Articles = function(props) {
         }
         return (
             <div>
-                <p>Is <strong>{props.target}</strong> found in: </p>
+                <p>Is <strong>{props.target}</strong> wikipedia reference found in: </p>
                 {article1}
                 <br/><strong>or</strong><br/>
                 {article2}
@@ -56,6 +60,9 @@ class App extends Component {
                 <div className="App-header">
                     <h2>Welcome to the Wikipedia Guess Game</h2>
                     <h3>Score: {this.state.score}</h3>
+                    <p>This game is in <strong>alpha</strong>.
+                        That means it breaks <strong>a lot </strong>.
+                        Report any issues on github.</p>
                 </div>
                 <Loading show={this.state.loading}></Loading>
                 <Articles
