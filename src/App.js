@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import LoadingImage from './loader.gif'
 import './App.css';
 import {fetchArticles} from './WikiParse.js';
@@ -73,6 +72,7 @@ class App extends Component {
                     wrongHandler={this.wrongHandler}
                     target={this.state.target}>
                 </Articles>
+                <div className="App-footer">Created by gsiou. Original idea by amostheo</div>
             </div>
         );
     }

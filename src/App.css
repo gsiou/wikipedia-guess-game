@@ -27,3 +27,13 @@
     border: 0;
     cursor: pointer;
 }
+
+.App-footer{
+    position:absolute;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    padding-bottom: 1%;
+    text-align: center;
+    font-size: small;
+}
