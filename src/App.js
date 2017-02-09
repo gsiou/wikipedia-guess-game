@@ -61,7 +61,7 @@ class App extends Component {
                     <h3>Score: {this.state.score}</h3>
                     <p>This game is in <strong>alpha</strong>.
                         That means it breaks <strong>a lot </strong>.
-                        Report any issues on <a href="https://gsiou.github.io/wikipedia-guess-game/">github</a>.</p>
+                        Report any issues on <a href="https://github.com/gsiou/wikipedia-guess-game">github</a>.</p>
                 </div>
                 <Loading show={this.state.loading}></Loading>
                 <Articles
