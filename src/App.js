@@ -59,7 +59,7 @@ class App extends Component {
                 <div className="App-header">
                     <h2>Welcome to the Wikipedia Guess Game</h2>
                     <h3 className="Score-label">Score: {this.state.score}</h3>
-                    <h4>Max Score: {this.state.maxScore}</h4>
+                    <h4>Your highscore: {this.state.maxScore}</h4>
                     <p>This game is in <strong>alpha</strong>.
                         That means it breaks <strong>a lot</strong>.
                         Report any issues on <a href="https://github.com/gsiou/wikipedia-guess-game">github</a>.</p>
