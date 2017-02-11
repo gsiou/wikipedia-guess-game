@@ -60,3 +60,7 @@
     width: 200px;
     cursor: pointer;
 }
+
+.Button-disabled {
+    background-color: #e3e3e3;
+}

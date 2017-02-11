@@ -52,14 +52,11 @@ const Articles = function(props) {
 }
 
 const SkipButton = function(props) {
-    if (props.skips > 0) {
-        return (
-            <button onClick={props.handler} className="Button-skip">Skip ➡</button>
-        )
-    }
-    else {
-        return null;
-    }
+    var statusClass = props.skips === 0 ? "Button-disabled" : "";
+    return (
+        <button onClick={props.handler} className={"Button-skip " + statusClass}>Skip ({props.skips} left) ➡</button>
+    )
+
 }
 
 class App extends Component {
@@ -70,7 +67,6 @@ class App extends Component {
                 <div className="App-header">
                     <h2>Welcome to the Wikipedia Guess Game</h2>
                     <h3 className="Score-label">Score: {this.state.score}</h3>
-                    <h3 className="Skips-label">Skips: {this.state.skips}</h3>
                     <h4>Your highscore: {this.state.maxScore}</h4>
 
                 </div>
@@ -83,6 +79,7 @@ class App extends Component {
                     wrongHandler={this.wrongHandler}
                     target={this.state.target}>
                 </Articles>
+                <hr/>
                 <SkipButton
                     handler={this.skipHandler}
                     skips={this.state.skips}>
@@ -152,6 +149,7 @@ class App extends Component {
             localStorage.maxScore = this.state.score;
         }
         this.setState({score: 0});
+        this.setState({skips: 0});
         this.loadArticles();
     }
 
