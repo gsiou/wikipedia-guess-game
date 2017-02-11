@@ -127,10 +127,6 @@ function getTitle(article) {
     return pages[Object.keys(pages)[0]].title;
 }
 
-function fetchLinksOfArticle(title){
-
-}
-
 function randomInt(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);

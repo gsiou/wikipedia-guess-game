@@ -50,3 +50,13 @@
 .Score-label {
     color: lightgreen;
 }
+
+.Button-skip {
+    background-color: lightgreen;
+    border: 0;
+    border-radius: 15px;
+    padding-bottom: 2%;
+    padding-top: 2%;
+    width: 200px;
+    cursor: pointer;
+}

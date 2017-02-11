@@ -51,6 +51,17 @@ const Articles = function(props) {
     }
 }
 
+const SkipButton = function(props) {
+    if (props.skips > 0) {
+        return (
+            <button onClick={props.handler} className="Button-skip">Skip ➡</button>
+        )
+    }
+    else {
+        return null;
+    }
+}
+
 class App extends Component {
 
     render() {
@@ -59,10 +70,9 @@ class App extends Component {
                 <div className="App-header">
                     <h2>Welcome to the Wikipedia Guess Game</h2>
                     <h3 className="Score-label">Score: {this.state.score}</h3>
+                    <h3 className="Skips-label">Skips: {this.state.skips}</h3>
                     <h4>Your highscore: {this.state.maxScore}</h4>
-                    <p>This game is in <strong>alpha</strong>.
-                        That means it breaks <strong>a lot</strong>.
-                        Report any issues on <a href="https://github.com/gsiou/wikipedia-guess-game">github</a>.</p>
+
                 </div>
                 <Loading show={this.state.loading}></Loading>
                 <Articles
@@ -73,7 +83,13 @@ class App extends Component {
                     wrongHandler={this.wrongHandler}
                     target={this.state.target}>
                 </Articles>
-                <div className="App-footer">Created by gsiou. Original idea by amostheo.</div>
+                <SkipButton
+                    handler={this.skipHandler}
+                    skips={this.state.skips}>
+                </SkipButton>
+                <div className="App-footer">
+                    Created by gsiou • Original idea by amostheo • <a href="https://github.com/gsiou/wikipedia-guess-game">GitHub</a>
+                </div>
             </div>
         );
     }
@@ -94,12 +110,14 @@ class App extends Component {
             article2: null,
             target: null,
             score: 0,
-            maxScore: storedMaxScore
+            maxScore: storedMaxScore,
+            skips: 0
         }
 
         this.componentDidMount = this.componentDidMount.bind(this);
         this.correctHandler = this.correctHandler.bind(this);
         this.wrongHandler = this.wrongHandler.bind(this);
+        this.skipHandler = this.skipHandler.bind(this);
         this.loadArticles = this.loadArticles.bind(this);
     }
 
@@ -122,6 +140,9 @@ class App extends Component {
             this.setState({maxScore: oldScore + 1});
             localStorage.maxScore = oldScore + 1;
         }
+        if((oldScore + 1) % 3 === 0) {
+            this.setState({skips: this.state.skips + 1});
+        }
         this.loadArticles();
     }
 
@@ -132,6 +153,13 @@ class App extends Component {
         }
         this.setState({score: 0});
         this.loadArticles();
+    }
+
+    skipHandler() {
+        if(this.state.skips > 0) {
+            this.setState({skips: this.state.skips - 1});
+            this.loadArticles();
+        }
     }
 }
 
