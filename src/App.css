@@ -47,10 +47,6 @@
     font-size: small;
 }
 
-.Score-label {
-    color: lightgreen;
-}
-
 .Button-skip {
     background-color: lightgreen;
     border: 0;
@@ -70,4 +66,15 @@
     border: 0;
     padding-top: 1px;
     padding-bottom: 1px;
+}
+
+.Score-label {
+    color: lightgreen;
+    transition: font-size 0.3s;
+    font-size: 18px;
+}
+
+.Score-animate {
+    font-size: 23px;
+    transition: font-size 0.3s;
 }

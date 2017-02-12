@@ -67,7 +67,9 @@ class App extends Component {
             <div className="App">
                 <div className="App-header">
                     <h2>Welcome to the Wikipedia Guess Game</h2>
-                    <h3 className="Score-label">Score: {this.state.score}</h3>
+                    <h3 className={"Score-label " + (this.state.animateScore ? 'Score-animate' : '')}>
+                        Score: {this.state.score}
+                    </h3>
                     <h4>Your highscore: {this.state.maxScore}</h4>
                     Language: <LanguageSelect
                         changeHandler={this.languageChangeHandler}
@@ -120,7 +122,8 @@ class App extends Component {
             score: 0,
             maxScore: storedMaxScore,
             skips: 0,
-            language: storedLanguage
+            language: storedLanguage,
+            animateScore: false
         }
 
         this.componentDidMount = this.componentDidMount.bind(this);
@@ -154,6 +157,9 @@ class App extends Component {
             this.setState({skips: this.state.skips + 1});
         }
         this.loadArticles();
+        this.setState({animateScore: true}, function(){
+            setTimeout(( ) => {this.setState({animateScore: false})}, 500);
+        });
     }
 
     wrongHandler() {
