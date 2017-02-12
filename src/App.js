@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import LoadingImage from './loader.gif'
 import './App.css';
 import {fetchArticles} from './WikiParse.js';
+import {LanguageSelect} from './LanguageSelect.js';
 
 const Loading = function(props) {
     if(props.show) {
@@ -68,7 +69,10 @@ class App extends Component {
                     <h2>Welcome to the Wikipedia Guess Game</h2>
                     <h3 className="Score-label">Score: {this.state.score}</h3>
                     <h4>Your highscore: {this.state.maxScore}</h4>
-
+                    Language: <LanguageSelect
+                        changeHandler={this.languageChangeHandler}
+                        language={this.state.language}>
+                    </LanguageSelect>
                 </div>
                 <Loading show={this.state.loading}></Loading>
                 <Articles
@@ -94,12 +98,19 @@ class App extends Component {
     constructor() {
         super();
         var storedMaxScore;
-        if (localStorage.maxScore){
+        if(localStorage.maxScore) {
             storedMaxScore = localStorage.maxScore;
         }
         else {
             localStorage.maxScore = 0;
             storedMaxScore = 0;
+        }
+        var storedLanguage;
+        if(localStorage.language) {
+            storedLanguage = localStorage.language;
+        }
+        else {
+            localStorage.language = 'en';
         }
         this.state = {
             loading: true,
@@ -108,7 +119,8 @@ class App extends Component {
             target: null,
             score: 0,
             maxScore: storedMaxScore,
-            skips: 0
+            skips: 0,
+            language: storedLanguage
         }
 
         this.componentDidMount = this.componentDidMount.bind(this);
@@ -116,6 +128,7 @@ class App extends Component {
         this.wrongHandler = this.wrongHandler.bind(this);
         this.skipHandler = this.skipHandler.bind(this);
         this.loadArticles = this.loadArticles.bind(this);
+        this.languageChangeHandler = this.languageChangeHandler.bind(this);
     }
 
     componentDidMount() {
@@ -125,7 +138,7 @@ class App extends Component {
     loadArticles() {
         this.setState({loading: true});
         var that = this;
-        fetchArticles().then(function(result) {
+        fetchArticles(this.state.language).then(function(result) {
             that.setState({loading: false, article1: result.article1, article2: result.article2, target: result.target});
         });
     }
@@ -158,6 +171,13 @@ class App extends Component {
             this.setState({skips: this.state.skips - 1});
             this.loadArticles();
         }
+    }
+
+    languageChangeHandler(event) {
+        this.setState({language: event.target.value}, function() {
+            this.loadArticles();
+            localStorage.language = this.state.language;
+        });
     }
 }
 
