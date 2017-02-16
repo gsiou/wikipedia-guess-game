@@ -24,31 +24,45 @@ const Article = function(props) {
     );
 }
 
-const Articles = function(props) {
-    if(props.ready){
-        var correctArticle = <Article text={props.title1} handler={props.correctHandler}></Article>;
-        var wrongArticle = <Article text={props.title2} handler={props.wrongHandler}></Article>;
-        var article1 = null;
-        var article2 = null;
-        if(Math.random() > 0.5){
-            article1 = correctArticle;
-            article2 = wrongArticle;
-        }
-        else {
-            article1 = wrongArticle;
-            article2 = correctArticle;
-        }
-        return (
-            <div>
-                <p>Is <span className="Target-label"><strong>{props.target}</strong></span> wikipedia reference found in: </p>
-                {article1}
-                <br/><strong>or</strong><br/>
-                {article2}
-            </div>
-        );
+class Articles extends Component {
+    constructor() {
+        super();
+        this.state = {chance: Math.random()};
     }
-    else{
-        return null;
+
+    render() {
+        var props = this.props;
+        if(props.ready){
+            var correctArticle = <Article text={props.title1} handler={props.correctHandler}></Article>;
+            var wrongArticle = <Article text={props.title2} handler={props.wrongHandler}></Article>;
+            var article1 = null;
+            var article2 = null;
+            if(this.state.chance > 0.5){
+                article1 = correctArticle;
+                article2 = wrongArticle;
+            }
+            else {
+                article1 = wrongArticle;
+                article2 = correctArticle;
+            }
+            return (
+                <div>
+                    <p>Is <span className="Target-label"><strong>{props.target}</strong></span> wikipedia reference found in: </p>
+                    {article1}
+                    <br/><strong>or</strong><br/>
+                    {article2}
+                </div>
+            );
+        }
+        else{
+            return null;
+        }
+    }
+
+    componentDidUpdate(prevProps) {
+        if(prevProps.target !== this.props.target) {
+            this.setState({chance: Math.random()});
+        }
     }
 }
 
@@ -133,6 +147,9 @@ class App extends Component {
             animateScore: false
         }
 
+        this.articlePool = [];
+        this.poolMax = 3;
+
         this.componentDidMount = this.componentDidMount.bind(this);
         this.correctHandler = this.correctHandler.bind(this);
         this.wrongHandler = this.wrongHandler.bind(this);
@@ -142,15 +159,55 @@ class App extends Component {
     }
 
     componentDidMount() {
-        this.loadArticles();
+        this.prefetchSingle().then(() =>{
+            this.loadArticles()
+        });
     }
 
     loadArticles() {
         this.setState({loading: true});
+        if(this.articlePool.length === 0) {
+            this.prefetchSingle().then(() => {
+                this.loadArticles();
+            });
+        }
+        else {
+            var data = this.fromPool();
+            this.setState({loading: false, article1: data.article1, article2: data.article2, target: data.target});
+            this.forceUpdate();
+        }
+        this.prefetch();
+    }
+
+    prefetchSingle() {
+        var that = this;
+        return new Promise(function(resolve, reject) {
+            fetchArticles(that.state.language).then(function(result) {
+                that.articlePool.push({article1: result.article1, article2: result.article2, target: result.target});
+                resolve();
+            });
+        });
+    }
+
+    fromPool() {
+        return this.articlePool.pop();
+    }
+
+    prefetch(){
+        for(var i = 0; i < this.poolMax - this.articlePool.length; i++) {
+            this.pushToPool();
+        }
+    }
+
+    pushToPool() {
         var that = this;
         fetchArticles(this.state.language).then(function(result) {
-            that.setState({loading: false, article1: result.article1, article2: result.article2, target: result.target});
+            that.articlePool.push(({article1: result.article1, article2: result.article2, target: result.target}));
         });
+    }
+
+    cleanPool() {
+        this.articlePool = [];
     }
 
     correctHandler() {
@@ -188,6 +245,7 @@ class App extends Component {
 
     languageChangeHandler(event) {
         this.setState({language: event.target.value}, function() {
+            this.cleanPool();
             this.loadArticles();
             localStorage.language = this.state.language;
         });
