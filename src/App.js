@@ -40,7 +40,7 @@ const Articles = function(props) {
         }
         return (
             <div>
-                <p>Is <strong>{props.target}</strong> wikipedia reference found in: </p>
+                <p>Is <span className="Target-label"><strong>{props.target}</strong></span> wikipedia reference found in: </p>
                 {article1}
                 <br/><strong>or</strong><br/>
                 {article2}
@@ -66,15 +66,22 @@ class App extends Component {
         return (
             <div className="App">
                 <div className="App-header">
-                    <h2>Welcome to the Wikipedia Guess Game</h2>
-                    <h3 className={"Score-label " + (this.state.animateScore ? 'Score-animate' : '')}>
-                        Score: {this.state.score}
-                    </h3>
-                    <h4>Your highscore: {this.state.maxScore}</h4>
-                    Language: <LanguageSelect
-                        changeHandler={this.languageChangeHandler}
-                        language={this.state.language}>
-                    </LanguageSelect>
+                    <div className="Status-bar">
+                        <span className="Highscore-label">
+                            Best: {this.state.maxScore}
+                        </span>
+                        <span className="Title-label">Game of Wiki</span>
+                        <span className="Language-select">
+                            <LanguageSelect
+                                changeHandler={this.languageChangeHandler}
+                                language={this.state.language}>
+                            </LanguageSelect>
+                        </span>
+                    </div>
+                    
+                    <span className={"Score-label " + (this.state.animateScore ? 'Score-animate' : '')}>
+                            Score: {this.state.score}
+                    </span>
                 </div>
                 <Loading show={this.state.loading}></Loading>
                 <Articles

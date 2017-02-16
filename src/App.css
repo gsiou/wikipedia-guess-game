@@ -13,9 +13,8 @@
 
 .App-header {
   background-color: #222;
-  height: 10%;
   padding-top: 1%;
-  padding-bottom: 0%;
+  padding-bottom: 1%;
   color: white;
 }
 
@@ -25,6 +24,7 @@
 
 .Article-button {
     background-color: #2377ff;
+    border: 2px solid #2377ff;
     color: white;
     border-radius: 15px;
     padding-left: 20px;
@@ -33,8 +33,15 @@
     padding-bottom: 20px;
     margin-top: 15px;
     margin-bottom: 15px;
-    border: 0;
     cursor: pointer;
+    min-width: 50%;
+    font-size: 1.2em;
+}
+
+.Article-button:hover {
+    border: 2px solid #2377ff;
+    background-color: white;
+    color: black;
 }
 
 .App-footer{
@@ -53,7 +60,8 @@
     border-radius: 15px;
     padding-bottom: 2%;
     padding-top: 2%;
-    width: 200px;
+    min-width: 50%;
+    font-size: 1.1em;
     cursor: pointer;
 }
 
@@ -62,19 +70,36 @@
 }
 
 .Language-select {
-    background-color: #e3e3e3;
     border: 0;
-    padding-top: 1px;
-    padding-bottom: 1px;
+    position: absolute;
+    right: 0;
 }
 
 .Score-label {
     color: lightgreen;
     transition: font-size 0.3s;
-    font-size: 18px;
+    font-size: 1.3em;
 }
 
 .Score-animate {
-    font-size: 23px;
+    font-size: 1.4em;
     transition: font-size 0.3s;
+}
+
+.Status-bar {
+    font-size: 1.2em;
+    width: 100%;
+}
+
+.Highscore-label {
+    position: absolute;
+    left: 0;
+}
+
+.Target-label {
+    font-size: 1.1em;
+}
+
+.Title-label {
+    font-size: 1.2em;
 }
