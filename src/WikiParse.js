@@ -10,7 +10,16 @@ export function fetchArticles(language='en') {
             } while(target_link_obj.ns !== 0);
             
             // Find related link
+            /*
             getRelated(target_link_obj, random_link_index, links, language, function(result) {
+                resolve({
+                    "article1": getTitle(fullarticle),
+                    "article2": getTitle(result),
+                    "target": target_link_obj.title
+                });
+            });
+            */
+            getUniqueRandom(target_link_obj, getTitle(fullarticle), links, language, function(result) {
                 resolve({
                     "article1": getTitle(fullarticle),
                     "article2": getTitle(result),
@@ -34,8 +43,8 @@ function getRandom(language, callback){
     random_article_promise.then(function(article) {
         var articleobj = JSON.parse(article);
         var pages = articleobj.query.pages;
-        var pageid = pages[(Object.keys(pages)[0])].pageid
-        
+        var pageid = pages[(Object.keys(pages)[0])].pageid;
+
         fetchFromWiki({
             'action': 'query',
             'prop': 'links',
@@ -91,6 +100,58 @@ function getRelated(target_link_obj, random_link_index, links, language, callbac
     });
 }
 
+function getUniqueRandom(target_link_obj, random_link_title, links, language, callback) {
+    // Get articles links
+    var random_article_promise = fetchFromWiki({
+        'action': 'query',
+        'grnlimit': 1,
+        'generator': 'random',
+        'grnnamespace': 0,
+        'format': 'json',
+        'origin': '*'
+    }, language);
+    
+    random_article_promise.then(function(article) {
+        var articleobj = JSON.parse(article);
+        var pages = articleobj.query.pages;
+        var title = pages[(Object.keys(pages)[0])].title;
+        if(title === random_link_title) {
+            // Same as random, try again.
+            getUniqueRandom(target_link_obj, random_link_title, links, language, callback);
+        }
+        else {
+            fetchFromWiki({
+                        'action': 'query',
+                        'prop': 'links',
+                        'pllimit': 'max',
+                        'format': 'json',
+                        'titles': title,
+                        'origin': '*'
+            }, language).then(function(article) {
+                var article_links = extractLinks(article);
+                if(article_links === undefined){
+                    getUniqueRandom(target_link_obj, random_link_title, links, language, callback);
+                }
+                else{
+                    var unique = true;
+                    for(var i = 0; i < article_links.length; i++) {
+                        if(article_links[i].title === target_link_obj.title){
+                            unique = false;
+                            break;
+                        }
+                    }
+                    if(unique){
+                        callback(article);
+                    }
+                    else{
+                        getUniqueRandom(target_link_obj, random_link_title, links, language, callback);
+                    }
+                }
+            });
+        }
+    });
+}
+
 
 function fetchFromWiki(options, language = "en") {
     return new Promise(function (resolve, reject){
@@ -98,6 +159,7 @@ function fetchFromWiki(options, language = "en") {
         var url = Object.keys(options).map((k) => {
             return (k) + '=' + (options[k])
         }).join('&');
+
         xhr.open('GET', 'https://' + language + '.wikipedia.org/w/api.php?' + url, true);
         xhr.setRequestHeader('Api-User-Agent', 'Wikipedia-guess-game/1.0 (dr.george995@gmail.com) ');
         xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
