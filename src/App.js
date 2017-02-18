@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import LoadingImage from './loader.gif'
+import LoadingImage from './logo.svg';
 import './App.css';
 import {fetchArticles} from './WikiParse.js';
 import {LanguageSelect} from './LanguageSelect.js';
@@ -8,8 +8,7 @@ const Loading = function(props) {
     if(props.show) {
         return (
             <div>
-                <h3>Loading...</h3>
-                <img src={LoadingImage} alt='loading'/>
+                <img src={LoadingImage} alt='loading' className='Logo-image'/>
             </div>
         );
     }
@@ -47,7 +46,9 @@ class Articles extends Component {
             }
             return (
                 <div>
-                    <p>Is <span className="Target-label"><strong>{props.target}</strong></span> wikipedia reference found in: </p>
+                    <span className="Target-question">
+                        Is <span className="Target-label"><strong>{props.target}</strong></span> wikipedia reference found in: <br/>
+                    </span>
                     {article1}
                     <br/><strong>or</strong><br/>
                     {article2}
@@ -74,6 +75,36 @@ const SkipButton = function(props) {
 
 }
 
+const Message = function(props) {
+    if (props.message === null){
+        return null;
+    }
+    else {
+        return (
+            <p className="Message-label">Correct answer was: {props.message}</p>
+        );
+    }
+}
+
+const Options = function(props) {
+    if(props.show === true) {
+        return (
+            <div className='Options'>
+                {props.children}
+            </div>
+        );
+    }
+    else {
+        return null;
+    }
+}
+
+const CloseButton = function(props) {
+    return(
+        <button onClick={props.handler} className="Close-Button">Close</button>
+    );
+}
+
 class App extends Component {
 
     render() {
@@ -86,34 +117,49 @@ class App extends Component {
                         </span>
                         <span className="Title-label">Game of Wiki</span>
                         <span className="Language-select">
-                            <LanguageSelect
-                                changeHandler={this.languageChangeHandler}
-                                language={this.state.language}>
-                            </LanguageSelect>
+                            
                         </span>
                     </div>
-                    
+                    <div className="Options-button" onClick={this.showOptions}>
+                    </div>
                     <span className={"Score-label " + (this.state.animateScore ? 'Score-animate' : '')}>
                             Score: {this.state.score}
                     </span>
                 </div>
-                <Loading show={this.state.loading}></Loading>
-                <Articles
-                    ready={!this.state.loading}
-                    title1={this.state.article1}
-                    title2={this.state.article2}
-                    correctHandler={this.correctHandler}
-                    wrongHandler={this.wrongHandler}
-                    target={this.state.target}>
-                </Articles>
-                <hr/>
-                <SkipButton
-                    handler={this.skipHandler}
-                    skips={this.state.skips}>
-                </SkipButton>
-                <div className="App-footer">
-                    Created by gsiou • Original idea by amostheo • <a href="https://github.com/gsiou/wikipedia-guess-game">GitHub</a>
+                <div className="App-main">
+                    <Loading show={this.state.loading}></Loading>
+                    <Articles
+                        ready={!this.state.loading}
+                        title1={this.state.article1}
+                        title2={this.state.article2}
+                        correctHandler={this.correctHandler}
+                        wrongHandler={this.wrongHandler}
+                        target={this.state.target}>
+                    </Articles>
+                    <hr/>
+                    <SkipButton
+                        handler={this.skipHandler}
+                        skips={this.state.skips}>
+                    </SkipButton>
+                    <Message message={this.state.message}></Message> 
                 </div>
+                <Options show={this.state.showOptions}>
+                    <h2>Options</h2>
+                    <strong>Language:</strong>&nbsp;
+                    <LanguageSelect
+                        changeHandler={this.languageChangeHandler}
+                        language={this.state.language}>
+                    </LanguageSelect>
+                    <br/>
+                    <h2>Credits</h2>
+                    <span>Background image from&nbsp;
+                        <a target="_blank" href="https://www.flickr.com/photos/shutterhacks/4474421855">here</a> (CC BY 2.0)
+                    </span><br/>
+                    <span>Wikipedia logo from&nbsp;
+                        <a target="_blank" href="https://en.wikipedia.org/wiki/Wikipedia_logo">here</a> (CC BY-SA 3.0)
+                    </span><br/>
+                    <CloseButton handler={this.hideOptions}></CloseButton>
+                </Options>
             </div>
         );
     }
@@ -144,7 +190,9 @@ class App extends Component {
             maxScore: storedMaxScore,
             skips: 0,
             language: storedLanguage,
-            animateScore: false
+            animateScore: false,
+            message: null,
+            showOptions: false
         }
 
         this.articlePool = [];
@@ -156,6 +204,8 @@ class App extends Component {
         this.skipHandler = this.skipHandler.bind(this);
         this.loadArticles = this.loadArticles.bind(this);
         this.languageChangeHandler = this.languageChangeHandler.bind(this);
+        this.hideOptions = this.hideOptions.bind(this);
+        this.showOptions = this.showOptions.bind(this);
     }
 
     componentDidMount() {
@@ -212,7 +262,7 @@ class App extends Component {
 
     correctHandler() {
         var oldScore = this.state.score;
-        this.setState({score: oldScore + 1});
+        this.setState({score: oldScore + 1, message: null});
         if(oldScore + 1 > this.state.maxScore) {
             this.setState({maxScore: oldScore + 1});
             localStorage.maxScore = oldScore + 1;
@@ -231,16 +281,24 @@ class App extends Component {
             this.setState({maxScore: this.state.score});
             localStorage.maxScore = this.state.score;
         }
-        this.setState({score: 0});
-        this.setState({skips: 0});
+        this.setState({score: 0, skips: 0, message: null});
         this.loadArticles();
     }
 
     skipHandler() {
         if(this.state.skips > 0) {
-            this.setState({skips: this.state.skips - 1});
-            this.loadArticles();
+            this.setState({skips: this.state.skips - 1}, () => {
+                this.flashMessage(this.state.article1);
+                this.loadArticles();
+            });
         }
+    }
+
+    flashMessage(messageText) {
+        this.setState({message: messageText}, () => {
+            // Clear message after 2 seconds
+            setTimeout(() => {this.setState({message: null});}, 2000);
+        });
     }
 
     languageChangeHandler(event) {
@@ -249,6 +307,14 @@ class App extends Component {
             this.loadArticles();
             localStorage.language = this.state.language;
         });
+    }
+
+    showOptions() {
+        this.setState({showOptions: true});
+    }
+
+    hideOptions() {
+        this.setState({showOptions: false});
     }
 }
 
