@@ -1,6 +1,6 @@
 @media all and (orientation: portrait) {
     body {
-        background: url('background-mobile918.jpg');
+        background: url('../public/background-mobile918.jpg');
         background-repeat: no-repeat;
         background-position: top;
         background-size: 100% auto;
@@ -10,7 +10,7 @@
 
 @media all and (orientation: landscape) {
     body {
-        background: url('background-desktop.jpg');
+        background: url('../public/background-desktop.jpg');
         background-repeat: no-repeat;
         background-position: center;
         background-size: 100%;
