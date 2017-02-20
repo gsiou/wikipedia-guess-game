@@ -132,7 +132,7 @@
     background-color: rgba(0, 0, 0, 0.8);
 }
 
-.Options {
+.Options, .Restart-dialog {
     background-color: rgba(0, 0, 0, 0.9);
     z-index: 100;
     position: absolute;
@@ -164,6 +164,23 @@
     right: 0;
     top: 0;
     cursor: pointer;
+}
+
+.Restart-button {
+    background-color: lightgreen;
+    border: 0;
+    border-radius: 15px;
+    padding-bottom: 2%;
+    padding-top: 2%;
+    min-width: 50%;
+    font-size: 1.1em;
+    cursor: pointer;
+    margin-top: 1%;
+    margin-bottom: 1%;
+}
+
+.Fail {
+    color: lightcoral;
 }
 
 @keyframes Logo-animation{

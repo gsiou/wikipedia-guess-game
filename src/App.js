@@ -105,6 +105,23 @@ const CloseButton = function(props) {
     );
 }
 
+const Restart = function(props) {
+    if(props.show === true) {
+        return(
+            <div className="Restart-dialog">
+                <h1 className='Fail'>Oops!</h1>
+                <p>The correct article was <strong>{props.article}</strong></p>
+                <p>You reached: {props.score}</p>
+                <p>Try again?</p>
+                <button className="Restart-button" onClick={props.handler}>Play!</button>
+            </div>
+        )
+    }
+    else {
+        return null;
+    }
+}
+
 class App extends Component {
 
     render() {
@@ -160,6 +177,12 @@ class App extends Component {
                     </span><br/>
                     <CloseButton handler={this.hideOptions}></CloseButton>
                 </Options>
+                <Restart 
+                    show={this.state.restart} 
+                    article={this.state.lastCorrect}
+                    handler={this.restartHandler}
+                    score={this.state.score}>
+                </Restart>
             </div>
         );
     }
@@ -192,7 +215,9 @@ class App extends Component {
             language: storedLanguage,
             animateScore: false,
             message: null,
-            showOptions: false
+            showOptions: false,
+            restart: false,
+            lastCorrect: null
         }
 
         this.articlePool = [];
@@ -206,6 +231,7 @@ class App extends Component {
         this.languageChangeHandler = this.languageChangeHandler.bind(this);
         this.hideOptions = this.hideOptions.bind(this);
         this.showOptions = this.showOptions.bind(this);
+        this.restartHandler = this.restartHandler.bind(this);
     }
 
     componentDidMount() {
@@ -276,12 +302,17 @@ class App extends Component {
         });
     }
 
+
     wrongHandler() {
+        this.setState({lastCorrect: this.state.article1, restart: true});
+    }
+
+    restartHandler() {
         if(this.state.score > this.state.maxScore) {
             this.setState({maxScore: this.state.score});
             localStorage.maxScore = this.state.score;
         }
-        this.setState({score: 0, skips: 0, message: null});
+        this.setState({score: 0, skips: 0, message: null, restart: false});
         this.loadArticles();
     }
 
