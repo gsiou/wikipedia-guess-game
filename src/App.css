@@ -1,6 +1,5 @@
 @media all and (orientation: portrait) {
     body {
-        background: url('background-mobile918.jpg');
         background-repeat: no-repeat;
         background-position: top;
         background-size: 100% auto;
@@ -10,7 +9,6 @@
 
 @media all and (orientation: landscape) {
     body {
-        background: url('background-desktop.jpg');
         background-repeat: no-repeat;
         background-position: center;
         background-size: 100%;
@@ -36,47 +34,87 @@
   padding-top: 1%;
   padding-bottom: 1%;
   color: white;
+  margin-bottom: 100px;
 }
 
 .App-intro {
   font-size: large;
 }
 
-.Article-button {
-    background-color: #2377ff;
-    border: 2px solid #2377ff;
-    color: white;
-    border-radius: 15px;
-    padding-left: 20px;
-    padding-right: 20px;
-    padding-top: 20px;
-    padding-bottom: 20px;
-    margin-top: 15px;
-    margin-bottom: 15px;
-    cursor: pointer;
-    min-width: 50%;
-    font-size: 1.2em;
+.Articles {
+    display: flex;
+    gap: 5px;
+    flex-direction: row;
+    align-items: center;
 }
 
-.Article-button:hover {
-    border: 2px solid #2377ff;
-    background-color: rgba(255, 255, 255, 0.5);
+@container layout (max-width: 800px) {
+    .Articles {
+        flex-direction: column;
+    }
+}
+
+
+.Article {
+    background-color: white;
+    border: 4px solid gray;
+    border-radius: 1px;
+    padding: 5px 30px;
+    text-align: left;
+    display: grid;
+    gap: 5px;
+    cursor: pointer;
+    min-width: 300px;
+}
+
+.Article .Skeleton {
+    /* width: 250px; */
+    height: 15px;
+    background-color: rgb(146, 146, 146);
+    border-radius: 25px;
+    display: block;
+}
+
+.Article-button {
     color: black;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.Layout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    container-type: inline-size;
+    container-name: layout;
+}
+
+#or {
+    height: 25px;
+    width: 25px;
+    padding: 5px;
+    font-weight: bold;
+    border-radius: 100%;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .Button-skip {
     background-color: lightgreen;
     border: 0;
-    border-radius: 15px;
-    padding-bottom: 2%;
-    padding-top: 2%;
-    min-width: 50%;
-    font-size: 1.1em;
+    border-radius: 10px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    min-width: 30%;
+    font-size: 1em;
     cursor: pointer;
 }
 
 .Button-disabled {
-    background-color: #e3e3e3;
+    background-color: #c1c1c1;
 }
 
 .Language-select {
@@ -100,8 +138,11 @@
 }
 
 .Highscore-label {
-    position: absolute;
-    left: 1%;
+    display: block;
+    color: rgb(204, 204, 204);
+    font-size: .8em;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 .Target-label {
@@ -147,9 +188,9 @@
     background-color: lightcoral;
     border: 0;
     border-radius: 15px;
-    padding-bottom: 2%;
-    padding-top: 2%;
-    min-width: 50%;
+    padding-bottom: 20px;
+    padding-top: 20px;
+    width: min(700px, 90%);
     font-size: 1.1em;
     cursor: pointer;
     margin-top: 1%;
@@ -170,9 +211,9 @@
     background-color: lightgreen;
     border: 0;
     border-radius: 15px;
-    padding-bottom: 2%;
-    padding-top: 2%;
-    min-width: 50%;
+    padding-bottom: 20px;
+    padding-top: 20px;
+    width: min(500px, 90%);
     font-size: 1.1em;
     cursor: pointer;
     margin-top: 1%;

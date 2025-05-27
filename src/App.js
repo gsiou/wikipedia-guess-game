@@ -19,7 +19,15 @@ const Loading = function(props) {
 
 const Article = function(props) {
     return (
-        <button className='Article-button' onClick={props.handler}>{props.text}</button>
+        <span className='Article' onClick={props.handler}>
+            <span>Wikipedia</span>
+            <span className='Article-button'>{props.text}</span>
+            <span style={{width: `${Math.floor(Math.random()*200 + 100)}px`}} className='Skeleton'></span>
+            <span style={{width: `${Math.floor(Math.random()*200 + 100)}px`}} className='Skeleton'></span>
+            <span style={{width: `${Math.floor(Math.random()*200 + 100)}px`}} className='Skeleton'></span>
+            <span style={{width: `${Math.floor(Math.random()*200 + 100)}px`}} className='Skeleton'></span>
+            <span style={{width: `${Math.floor(Math.random()*200 + 100)}px`}} className='Skeleton'></span>
+        </span>
     );
 }
 
@@ -45,13 +53,15 @@ class Articles extends Component {
                 article2 = correctArticle;
             }
             return (
-                <div>
+                <div className='Layout'>
                     <span className="Target-question">
                         Is <span className="Target-label"><strong>{props.target}</strong></span> wikipedia reference found in: <br/>
                     </span>
-                    {article1}
-                    <br/><strong>or</strong><br/>
-                    {article2}
+                    <div className='Articles'>
+                        {article1}
+                        <br/><span id="or">or</span><br/>
+                        {article2}        
+                    </div>
                 </div>
             );
         }
@@ -70,7 +80,7 @@ class Articles extends Component {
 const SkipButton = function(props) {
     var statusClass = props.skips === 0 ? "Button-disabled" : "";
     return (
-        <button onClick={props.handler} className={"Button-skip " + statusClass}>Skip ({props.skips} left) ➡</button>
+        <button onClick={props.handler} className={"Button-skip " + statusClass}>Skip ({props.skips}) ➡</button>
     )
 
 }
@@ -129,9 +139,6 @@ class App extends Component {
             <div className="App">
                 <div className="App-header">
                     <div className="Status-bar">
-                        <span className="Highscore-label">
-                            Best: {this.state.maxScore}
-                        </span>
                         <span className="Title-label">Game of Wiki</span>
                         <span className="Language-select">
                             
@@ -140,7 +147,10 @@ class App extends Component {
                     <div className="Options-button" onClick={this.showOptions}>
                     </div>
                     <span className={"Score-label " + (this.state.animateScore ? 'Score-animate' : '')}>
-                            Score: {this.state.score}
+                        <span className="Highscore-label">
+                            High Score: {this.state.maxScore}
+                        </span>
+                        Score: {this.state.score}
                     </span>
                 </div>
                 <div className="App-main">
@@ -168,13 +178,6 @@ class App extends Component {
                         language={this.state.language}>
                     </LanguageSelect>
                     <br/>
-                    <h2>Credits</h2>
-                    <span>Background image from&nbsp;
-                        <a target="_blank" href="https://www.flickr.com/photos/shutterhacks/4474421855">here</a> (CC BY 2.0)
-                    </span><br/>
-                    <span>Wikipedia logo from&nbsp;
-                        <a target="_blank" href="https://en.wikipedia.org/wiki/Wikipedia_logo">here</a> (CC BY-SA 3.0)
-                    </span><br/>
                     <CloseButton handler={this.hideOptions}></CloseButton>
                 </Options>
                 <Restart 
